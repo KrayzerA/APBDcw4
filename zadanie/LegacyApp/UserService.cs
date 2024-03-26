@@ -6,7 +6,7 @@ namespace LegacyApp
     {
         public bool AddUser(string firstName, string lastName, string email, DateTime dateOfBirth, int clientId)
         {
-            if (string.IsNullOrEmpty(firstName) || string.IsNullOrEmpty(lastName))
+            if (!IsFirstNameCorrect(firstName) || !IsLastNameCorrect(lastName))
             {
                 return false;
             }
@@ -18,7 +18,10 @@ namespace LegacyApp
 
             var now = DateTime.Now;
             int age = now.Year - dateOfBirth.Year;
-            if (now.Month < dateOfBirth.Month || (now.Month == dateOfBirth.Month && now.Day < dateOfBirth.Day)) age--;
+            if (now.Month < dateOfBirth.Month || (now.Month == dateOfBirth.Month && now.Day < dateOfBirth.Day))
+            {
+                age--;
+            }
 
             if (age < 21)
             {
@@ -66,6 +69,26 @@ namespace LegacyApp
             }
 
             UserDataAccess.AddUser(user);
+            return true;
+        }
+
+        private static bool IsFirstNameCorrect(string firstName)
+        {
+            if (string.IsNullOrEmpty(firstName))
+            {
+                return false;
+            }
+
+            return true;
+        }
+        
+        private static bool IsLastNameCorrect(string lastName)
+        {
+            if (string.IsNullOrEmpty(lastName))
+            {
+                return false;
+            }
+
             return true;
         }
     }
