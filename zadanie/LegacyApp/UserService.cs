@@ -41,7 +41,7 @@ namespace LegacyApp
 
             var now = DateTime.Now;
             int age = now.Year - dateOfBirth.Year;
-            if (IsAgeShoudBeRounded(dateOfBirth, now))
+            if (IsAgeShouldBeRounded(dateOfBirth, now))
             {
                 age--;
             }
@@ -98,7 +98,7 @@ namespace LegacyApp
             }
         }
 
-        private bool IsAgeShoudBeRounded(DateTime dateOfBirth, DateTime now)
+        private bool IsAgeShouldBeRounded(DateTime dateOfBirth, DateTime now)
         {
             return now.Month < dateOfBirth.Month || (now.Month == dateOfBirth.Month && now.Day < dateOfBirth.Day);
         }
