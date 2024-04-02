@@ -1,9 +1,17 @@
 using LegacyApp;
+using Xunit.Abstractions;
 
 namespace Tests;
 
 public class UserServiceTests
 {
+    private readonly ITestOutputHelper _testOutputHelper;
+
+    public UserServiceTests(ITestOutputHelper testOutputHelper)
+    {
+        _testOutputHelper = testOutputHelper;
+    }
+
     [Fact]
     public void AddUser_Should_Return_False_When_Email_Without_At_And_Dot()
     {
@@ -109,13 +117,76 @@ public class UserServiceTests
         Assert.False(result);
     }
     
-    // [Fact]
-    // public void IsAgeShouldBeRounded_Should_Return_True_When_Month_Of_Birth_Is_Less_Than_Todays_Month()
-    // {
-    //     DateTime now = DateTime.Now;
-    //     DateTime date = new DateTime(now.Year - 5,now.Month - 1,10);
-    //
-    //
-    //     Assert.False(result);
-    // }
+    [Fact]
+    public void AddUser_Should_Return_False_When_Age_Is_Less_Than_21()
+    {
+        string firstName = "art";
+        string lastName = "name";
+        DateTime date = new DateTime(2004,10,10);
+        int clientId = 1;
+        string email = "email@gmail.com";
+        var service = new UserService();
+
+        bool result = service.AddUser(firstName, lastName, email, date, clientId);
+
+        Assert.False(result);
+    }
+    
+    [Fact]
+    public void AddUser_Should_Throw_ArgumentException_When_Client_With_Such_Id_Doesnt_Exists()
+    {
+        string firstName = "art";
+        string lastName = "name";
+        DateTime date = new DateTime(1980,10,10);
+        int clientId = -5;
+        string email = "email@gmail.com";
+        var service = new UserService();
+
+        Assert.Throws<ArgumentException>(() => service.AddUser(firstName, lastName, email, date, clientId));
+    }
+    
+    [Fact]
+    public void AddUser_Should_Return_False_When_User_Has_CreaditLimit_And_CreditLimit_Is_Less_Than_500()
+    {
+        string firstName = "art";
+        string lastName = "Kowalski";
+        DateTime date = new DateTime(1980,10,10);
+        int clientId = 1;
+        string email = "email@gmail.com";
+        var service = new UserService();
+
+        bool result = service.AddUser(firstName, lastName, email, date, clientId);
+        
+        Assert.False(result);
+    }
+    
+    [Fact]
+    public void AddUser_Should_Return_True_When_User_Dont_Has_CreaditLimit()
+    {
+        string firstName = "art";
+        string lastName = "Malewski";
+        DateTime date = new DateTime(1980,10,10);
+        int clientId = 2;
+        string email = "email@gmail.com";
+        var service = new UserService();
+
+        bool result = service.AddUser(firstName, lastName, email, date, clientId);
+        
+        Assert.True(result);
+    }
+    
+    [Fact]
+    public void AddUser_Should_Return_True_When_User_Has_CreaditLimit_More_Than_500()
+    {
+        string firstName = "art";
+        string lastName = "Smith";
+        DateTime date = new DateTime(1980,10,10);
+        int clientId = 3;
+        string email = "email@gmail.com";
+        var service = new UserService();
+
+        bool result = service.AddUser(firstName, lastName, email, date, clientId);
+        
+        Assert.True(result);
+    }
 }
