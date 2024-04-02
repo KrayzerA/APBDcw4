@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Runtime.CompilerServices;
 
 namespace LegacyApp
 {
@@ -65,13 +64,18 @@ namespace LegacyApp
 
             CalculateCreditLimit(user, client);
 
-            if (user.HasCreditLimit && user.CreditLimit < 500)
+            if (!IsUserHasGoodCreditLimit(user))
             {
                 return false;
             }
 
             UserDataAccess.AddUser(user);
             return true;
+        }
+
+        private static bool IsUserHasGoodCreditLimit(User user)
+        {
+            return !(user.HasCreditLimit && user.CreditLimit < 500);
         }
 
         private void CalculateCreditLimit(User user, Client client)
@@ -101,17 +105,17 @@ namespace LegacyApp
 
         private bool IsEmailCorrect(string email)
         {
-            return !email.Contains("@") && !email.Contains(".");
+            return email.Contains("@") && email.Contains(".");
         }
 
         private bool IsLastNameCorrect(string lastName)
         {
-            return string.IsNullOrEmpty(lastName);
+            return !string.IsNullOrEmpty(lastName);
         }
 
         private bool IsFirstNameCorrect(string firstName)
         {
-            return string.IsNullOrEmpty(firstName);
+            return !string.IsNullOrEmpty(firstName);
         }
     }
 }
