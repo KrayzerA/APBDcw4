@@ -39,9 +39,8 @@ namespace LegacyApp
                 return false;
             }
 
-            var now = DateTime.Now;
-            int age = now.Year - dateOfBirth.Year;
-            if (IsAgeShouldBeRounded(dateOfBirth, now))
+            int age = CalculateAge(dateOfBirth);
+            if (IsAgeShouldBeRounded(dateOfBirth, DateTime.Now))
             {
                 age--;
             }
@@ -53,16 +52,7 @@ namespace LegacyApp
 
             var client = _clientRepository.GetById(clientId);
 
-            var user = new User
-            {
-                Client = client,
-                DateOfBirth = dateOfBirth,
-                EmailAddress = email,
-                FirstName = firstName,
-                LastName = lastName
-            };
-
-            CalculateCreditLimit(user, client);
+            var user = CreateUser(firstName, lastName, email, dateOfBirth, client);
 
             if (!IsUserHasGoodCreditLimit(user))
             {
@@ -77,6 +67,22 @@ namespace LegacyApp
         {
             return !(user.HasCreditLimit && user.CreditLimit < 500);
         }
+        
+        private User CreateUser(string firstName, string lastName, string email, DateTime dateOfBirth, Client client)
+        {
+            var user = new User
+            {
+                Client = client,
+                DateOfBirth = dateOfBirth,
+                EmailAddress = email,
+                FirstName = firstName,
+                LastName = lastName
+            };
+
+            CalculateCreditLimit(user, client);
+            return user;
+        }
+        
 
         private void CalculateCreditLimit(User user, Client client)
         {
@@ -103,6 +109,10 @@ namespace LegacyApp
             return now.Month < dateOfBirth.Month || (now.Month == dateOfBirth.Month && now.Day < dateOfBirth.Day);
         }
 
+        private int CalculateAge(DateTime dateOfBirth)
+        {
+            return DateTime.Now.Year - dateOfBirth.Year;
+        }
         private bool IsEmailCorrect(string email)
         {
             return email.Contains("@") && email.Contains(".");
